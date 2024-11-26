@@ -41,8 +41,5 @@ set -euo pipefail
       exit 1
     fi
 
-    kubectl create ns llmos-dashboards
-    kubectl create ns llmos-system
-
     rm -rf ./venv ./*.git
 } 2>&1

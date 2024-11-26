@@ -19,6 +19,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - run: |
+          git remote add upstream https://github.com/llmos-ai/charts.git
+          git fetch upstream
+
       - name: Set up Helm
         uses: azure/setup-helm@v4
         with:

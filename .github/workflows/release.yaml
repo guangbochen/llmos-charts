@@ -3,7 +3,7 @@ name: Release Charts
 on:
   workflow_run:
     workflows: ["Lint and Test Charts"]
-    branches: [main]
+    branches: ['release-*']
     types:
       - completed
 

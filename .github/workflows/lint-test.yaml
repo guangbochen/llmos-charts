@@ -30,11 +30,11 @@ jobs:
           else
           echo "Adding remote '$REMOTE_NAME'."
             git remote add $REMOTE_NAME $UPSTREAM_REPO
+            git fetch upstream
           fi
 #          echo "UPSTREAM_REPO=$UPSTREAM_REPO"
 #          git remote rm upstream
 #          git remote add upstream "$UPSTREAM_REPO"
-#          git fetch upstream
 
       - name: Set up Helm
         uses: azure/setup-helm@v4

@@ -1,4 +1,4 @@
-{{- if and (not .Values.kubeControllerManager.enabled) .Values.grafana.defaultDashboardsEnabled (eq .Values.global.k8s.provider "k3s") }}
+{{- if and .Values.grafana.enabled (not .Values.kubeControllerManager.enabled) .Values.grafana.defaultDashboardsEnabled (eq .Values.global.k8s.provider "k3s") }}
 apiVersion: v1
 kind: ConfigMap
 metadata:

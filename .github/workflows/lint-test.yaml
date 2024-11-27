@@ -22,19 +22,11 @@ jobs:
         with:
           fetch-depth: 0
 
-#      - name: Set Up Upstream Repo
-#        run: |
-#          REMOTE_NAME="upstream"
-#          if git remote get-url $UPSTREAM_REPO > /dev/null 2>&1; then
-#            echo "Remote '$REMOTE_NAME' already exists. Skipping addition."
-#          else
-#          echo "Adding remote '$REMOTE_NAME'."
-#            git remote add $REMOTE_NAME $UPSTREAM_REPO
-#          fi
-#          git fetch upstream
-#          echo "UPSTREAM_REPO=$UPSTREAM_REPO"
-#          git remote rm upstream
-#          git remote add upstream "$UPSTREAM_REPO"
+      - name: Set Up Upstream Repo
+        run: |
+          echo "UPSTREAM_REPO=$UPSTREAM_REPO"
+          git remote add upstream "$UPSTREAM_REPO"
+          git fetch upstream
 
       - name: Set up Helm
         uses: azure/setup-helm@v4

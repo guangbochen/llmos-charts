@@ -1,0 +1,17 @@
+prometheusOperator:
+  namespaces:
+    releaseNamespace: true
+    additional:
+      - kube-system
+
+prometheus-node-exporter:
+  service:
+    targetPort: 9101
+    port: 9101
+
+grafana:
+  defaultDashboards:
+    useExistingNamespace: true
+
+crds:
+  enabled: false

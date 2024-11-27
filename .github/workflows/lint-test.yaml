@@ -70,10 +70,6 @@ jobs:
         run: kubectl apply -k https://github.com/kubernetes-sigs/gateway-api/config/crd
         if: env.llmos_monitoring_changed == 'true'
       
-      - name: Apply Gateway API CRDs
-        run: kubectl apply -k https://github.com/kubernetes-sigs/gateway-api/config/crd
-        if: env.llmos_monitoring_changed == 'true'
-
       - name: Run Monitoring Chart Test In Specified Namespace
         env:
           CHANGED_LIST: ${{ steps.list-changed.outputs.changed_list }}

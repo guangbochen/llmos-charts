@@ -60,21 +60,30 @@ jobs:
         id: check-changed-list
         run: |
           if [[ "${{ steps.list-changed.outputs.changed_list }}" == *"kube-prometheus-stack"* ]]; then
-          echo "stack_changed=true" >> $GITHUB_ENV
+          echo "llmos_monitoring_changed=true" >> $GITHUB_ENV
           else
-          echo "stack_changed=false" >> $GITHUB_ENV
+          echo "llmos_monitoring_changed=false" >> $GITHUB_ENV
           fi
         if: steps.list-changed.outputs.changed == 'true'
+      
+      - name: Apply Gateway API CRDs
+        run: kubectl apply -k https://github.com/kubernetes-sigs/gateway-api/config/crd
+        if: env.llmos_monitoring_changed == 'true'
+      
+      - name: Apply Gateway API CRDs
+        run: kubectl apply -k https://github.com/kubernetes-sigs/gateway-api/config/crd
+        if: env.llmos_monitoring_changed == 'true'
 
       - name: Run Monitoring Chart Test In Specified Namespace
         env:
           CHANGED_LIST: ${{ steps.list-changed.outputs.changed_list }}
         run: |
-          kubectl create ns llmos-system && kubectl create ns llmos-monitoring-system
+          kubectl create ns llmos-system && kubectl create ns llmos-monitoring-system && kubectl create ns llmos-dashboards
           ct install --namespace llmos-monitoring-system --config .github/linters/ct.yaml
-        if: env.stack_changed == 'true'
+        if: env.llmos_monitoring_changed == 'true'
+     
       - name: Run chart-testing (install)
         run: ct install --config .github/linters/ct.yaml
         env:
           CHANGED_LIST: ${{ steps.list-changed.outputs.changed_list }}
-        if: env.stack_changed != 'true'
+        if: env.llmos_monitoring_changed != 'true'

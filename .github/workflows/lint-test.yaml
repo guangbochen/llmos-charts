@@ -70,7 +70,7 @@ jobs:
         env:
           CHANGED_LIST: ${{ steps.list-changed.outputs.changed_list }}
         run: |
-          kubectl create ns llmos-monitoring-system llmos-system
+          kubectl create ns llmos-system
           ct install --namespace llmos-monitoring-system --config .github/linters/ct.yaml
         if: env.stack_changed == 'true'
       - name: Run chart-testing (install)

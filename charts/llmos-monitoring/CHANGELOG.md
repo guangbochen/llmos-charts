@@ -4,7 +4,7 @@ This changelog highlights notable changes to this chart compared to the upstream
 
 - **Upstream `kube-prometheus-stack` version**: 66.1.1
 
-## Changes - v0.1.0 (2024-11-13)
+## Changes - v0.1.5 (2024-12-25)
 
 ### General
 
@@ -26,3 +26,7 @@ This changelog highlights notable changes to this chart compared to the upstream
 - **Added default LLMOS dashboard**: Added a default LLMOS dashboard on the Grafana home page.
 - **Modified Grafana service values**: Modified the default values for `grafana.service` and exposed them in the default `README.md`.
 - **Modified Grafana configuration**: Modified the default configuration to automatically assign users who access Grafana to the Viewer role and enable anonymous access to Grafana dashboards by default. This works well for LLMOS users accessing Grafana via the `kubectl proxy` on the LLMOS Dashboard UI, where users are authenticated by the Kubernetes API Server. However, you should modify this behavior if exposing Grafana in a non-authenticated way (e.g., as a `NodePort` service).
+
+
+### Alertmanager
+- **Added default `alertmanagerConfigSelector`**: Added a default [alertmanagerConfigSelector](https://prometheus-operator.dev/docs/developer/alerting/#using-alertmanagerconfig-resources) that to tell the operator which AlertmanagerConfig objects should be selected and merged with the main Alertmanager configuration.

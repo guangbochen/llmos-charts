@@ -70,8 +70,8 @@ securityContext:
 
 resources:
   requests:
-    cpu: 100m
-    memory: 128Mi
+    cpu: 20m
+    memory: 100Mi
 #   limits: # Do not set limits for the SUC
 
 # Additional volumes on the output Deployment definition.

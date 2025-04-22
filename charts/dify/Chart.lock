@@ -1,0 +1,12 @@
+dependencies:
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 16.6.3
+- name: redis
+  repository: https://charts.bitnami.com/bitnami
+  version: 20.3.0
+- name: weaviate
+  repository: https://weaviate.github.io/weaviate-helm
+  version: 17.4.5
+digest: sha256:d60b59ef688bb7c019f986176fc793b0d6531768a929b503a10c5c1841d99fd6
+generated: "2025-04-22T14:35:52.808045+08:00"

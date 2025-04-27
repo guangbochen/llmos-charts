@@ -369,8 +369,8 @@ proxy:
         ##   set, choosing the default provisioner.
         ## ReadWriteMany access mode required for nginx
         ##
-        storageClass: "llmos-ceph-filesystem"
-        accessModes: ReadWriteMany
+        storageClass: ""
+        accessModes: ReadWriteOnce
         size: 1Gi
         subPath: ""
   service:
@@ -643,11 +643,11 @@ pluginDaemon:
   replicas: 1
   resources:
     requests:
-      cpu: 10m
-      memory: 50Mi
+      cpu: 100m
+      memory: 200Mi
     limits:
-      cpu: 200m
-      memory: 512Mi
+      cpu: 2000m
+      memory: 4096Mi
   nodeSelector: {}
   affinity: {}
   tolerations: []
@@ -798,7 +798,6 @@ postgresql:
 
 weaviate:
   enabled: true
-
   # Scale replicas of Weaviate. Note that as of v1.8.0 dynamic scaling is limited
   # to cases where no data is imported yet. Scaling down after importing data may
   # break usability. Full dynamic scalability will be added in a future release.
@@ -859,10 +858,6 @@ weaviate:
       users:
         - *vectorDBUser
 
-  query_defaults:
-    limit: 100
-  debug: false
-
   # Insert any custom environment variables or envSecrets by putting the exact name
   # and desired value into the settings below. Any env name passed will be automatically
   # set for the statefulSet.
@@ -917,9 +912,9 @@ weaviate:
 
 ## dify service
 service:
-  type: NodePort
+  name: http-dify
+  type: ClusterIP
   port: 80
-  nodePort: 30882
 
 ingress:
   enabled: false

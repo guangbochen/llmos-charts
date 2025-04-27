@@ -400,6 +400,12 @@ http {
                       '$status $body_bytes_sent "$http_referer" '
                       '"$http_user_agent" "$http_x_forwarded_for"';
 
+    proxy_connect_timeout       10;
+    proxy_read_timeout          180;
+    proxy_send_timeout          5;
+    proxy_buffering             off;
+    proxy_cache_path            /var/cache/nginx/cache levels=1:2 keys_zone=my_zone:100m inactive=1d max_size=10g;
+
 {{- if .Values.proxy.log.persistence.enabled }}
     access_log  {{ .Values.proxy.log.persistence.mountPath }}/access.log  main;
 {{- end }}
@@ -464,8 +470,28 @@ server {
     {{- end }}
 
     location / {
+      proxy_cache         my_zone;
+      proxy_cache_valid   200 302 1d;
+      proxy_cache_valid   301 30d;
+      proxy_cache_valid   any 5m;
+      proxy_cache_bypass  $http_cache_control;
+      add_header          X-Proxy-Cache $upstream_cache_status;
+      add_header          Cache-Control "public";
+
       proxy_pass http://{{ template "dify.web.fullname" .}}:{{ .Values.web.service.port }};
-      include proxy.conf;
+      # include proxy.conf;
+
+      sub_filter_once off;
+
+      sub_filter '"appSubUrl":""' '"appSubUrl":"/api/v1/namespaces/{{ .Release.Namespace }}/services/http:{{ template "dify.fullname" .}}:{{ .Values.service.name }}/proxy"';
+      #sub_filter '"url":"/' '"url":"./';
+      sub_filter ':"/avatar/' ':"avatar/';
+
+      if ($request_filename ~ .*\.(?:js|css|jpg|jpeg|gif|png|ico|cur|gz|svg|svgz|mp4|ogg|ogv|webm)$) {
+        expires             90d;
+      }
+
+      rewrite ^/k8s/clusters/.*/proxy(.*) /$1 break;
     }
 }
 {{- end }}

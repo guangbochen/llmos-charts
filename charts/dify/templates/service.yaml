@@ -34,7 +34,7 @@ spec:
   type: {{ .Values.service.type }}
 {{- end }}
   ports:
-    - name: http-dify
+    - name: {{ .Values.service.name }}
       port: {{ .Values.service.port }}
       protocol: TCP
       targetPort: dify

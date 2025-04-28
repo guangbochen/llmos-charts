@@ -1,0 +1,95 @@
+# add nginx deployment 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-nginx
+  labels:
+    app: nginx
+    release: {{ .Release.Name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: nginx
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: nginx
+        image: {{ .Values.proxy.image.registry }}/{{.Values.proxy.image.repository }}:{{.Values.proxy.image.tag}}
+        ports:
+        - containerPort: 80
+          name: http
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+        volumeMounts:
+        - name: nginx-conf
+          mountPath: /etc/nginx/conf.d
+      volumes:
+      - name: nginx-conf
+        configMap:
+          name: {{ .Release.Name }}-nginx-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-nginx-config
+  labels:
+    app: nginx
+    release: {{ .Release.Name }}
+data:
+  default.conf: |
+    server {
+        listen 80;
+        server_name _;
+
+        location /api {
+            proxy_pass http://{{ .Release.Name }}-api:{{ .Values.ragflow.api.service.port }};
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+
+        location / {
+            proxy_pass http://{{ .Release.Name }}:{{ .Values.ragflow.service.port }};
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+
+            #sub_filter_once off;
+            #sub_filter '</title>' '</title><script> window.publicPath = \'/api/v1/namespaces/{{ .Release.Namespace }}/services/http:ragflow-nginx:http/proxy/\';</script>';
+
+            if ($request_filename ~ .*\.(?:js|css|jpg|jpeg|gif|png|ico|cur|gz|svg|svgz|mp4|ogg|ogv|webm)$) {
+              expires             90d;
+            }
+        }
+    }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-nginx
+  labels:
+    app: nginx
+    release: {{ .Release.Name }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: nginx
+    release: {{ .Release.Name }}
